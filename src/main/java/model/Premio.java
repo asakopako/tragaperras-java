@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Premio {
     private ArrayList<Fruta> combinacion;
@@ -17,5 +18,13 @@ public class Premio {
 
     public Double getValor() {
         return valor;
+    }
+
+    public boolean isThisPremio(List<Fruta> jugada) {
+        for(int i = 0; i < combinacion.size(); i++) {
+            if(jugada.get(i) != combinacion.get(i))
+                return false;
+        }
+        return true;
     }
 }
