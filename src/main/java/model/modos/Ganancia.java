@@ -2,8 +2,10 @@ package model.modos;
 
 import model.Premio;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Ganancia implements Modo {
     Double limite;
@@ -14,10 +16,13 @@ public class Ganancia implements Modo {
 
     @Override
     public boolean isAccepted(Premio premio, List<Premio> historico) {
-        List<Premio> ultimos = new LinkedList<>();
         Double cantidad = premio.getValor();
+
+        //historico = historico.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        //historico.stream().sorted(Comparator::reversed);
+
         for(int i = 0; i < 9; i++) {
-            cantidad += ((LinkedList<Premio>) historico).getLast().getValor();
+            cantidad += historico.get(historico.size()-1-i).getValor();
         }
 
         return !(cantidad > limite);

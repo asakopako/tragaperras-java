@@ -8,17 +8,17 @@ import java.util.List;
 
 public class Maquina {
     private final Integer tamano; // numero de casillas de la máquina
-    private ArrayList<Fruta> casillas;
+    //private ArrayList<Fruta> casillas;
     private Double recaudacion;
     private final Double precio; // el costo de una jugada
     private Double credito = 0.0;
-    private List<Premio> premios = new LinkedList<>();
-    private List<Premio> historico = new LinkedList<>();
+    private List<Premio> premios = new ArrayList<>();
+    private List<Premio> historico = new ArrayList<>();
     private Modo modo;    // modo de aceptacion
 
     public Maquina(Integer tamano, Double recaudacion, Double precio, Modo modo){
         this.tamano = tamano;
-        this.casillas = new ArrayList<>(tamano);
+        //this.casillas = new ArrayList<>(tamano);
         this.recaudacion = recaudacion;
         this.precio = precio;
         this.modo = modo;
@@ -38,7 +38,7 @@ public class Maquina {
             List<Fruta> jugada = generarCombinacion();
             if(existPremio(jugada)) {
                 Premio premio = getPremio(jugada);
-                if (premio.getValor() >= recaudacion) {
+                if (premio.getValor() <= recaudacion) {
                     if (modo.isAccepted(premio, historico)) {
                         historico.add(premio);
                         recaudacion -= premio.getValor();
@@ -47,12 +47,14 @@ public class Maquina {
                     }
                     else jugar();
                 }
+                else jugar();
             }
             else mostrarJugada(jugada);
         }
+//        else throw new Exception("No hay credito suficiente");
     }
 
-    public List<Fruta> generarCombinacion() {
+    private List<Fruta> generarCombinacion() {
         ArrayList<Fruta> resultado = new ArrayList<>(tamano);
         for(int i = 0; i < tamano; i++) {
             resultado.set(i, Fruta.values()[(int) (Math.random() * Fruta.values().length)]);
@@ -62,21 +64,26 @@ public class Maquina {
 
     // método cobrar ¿qué devuelve? el crédito disponible
 
-    public boolean existPremio(List<Fruta> jugada) {
+    private boolean existPremio(List<Fruta> jugada) {
         for (Premio premio : premios) {
-            for(int i = 0; i < tamano; i++) {
-                if(jugada.get(i) != premio.getCombinacion().get(i))
-                    return false;
-            }
+            if(isPremio(jugada, premio)) return true;
         }
-        return true;
+        return false;
     }
 
-    public Premio getPremio(List<Fruta> jugada) {
+    private Premio getPremio(List<Fruta> jugada) {
         for (Premio premio : premios) {
-            if(premio.isThisPremio(jugada)) return premio;
+            if(isPremio(jugada, premio)) return premio;
         }
         return null;
+    }
+
+    private boolean isPremio(List<Fruta> jugada, Premio premio) {
+        for (int i = 0; i < tamano; i++) {
+            if(jugada.get(i) != premio.getCombinacion().get(i))
+                return false;
+        }
+        return true;
     }
 
     private void mostrarJugada(List<Fruta> jugada) {
