@@ -25,6 +25,6 @@ public class Inicio {
 
         maquina.insertarCredito(30.0);
 
-
     }
+
 }
